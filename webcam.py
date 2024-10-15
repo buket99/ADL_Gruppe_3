@@ -3,7 +3,6 @@ import cv2
 input("Press the Enter key to continue: ")
 video = cv2.VideoCapture(0)
 a = 0
-
 while True:
     a = a + 1
     # Create a frame object
