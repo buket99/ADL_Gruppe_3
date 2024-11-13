@@ -1,5 +1,7 @@
 import torch
 from torchvision import datasets, models, transforms
+from torchvision.io import decode_image
+from torchvision.models import resnet50, ResNet50_Weights
 from torch.utils.data import DataLoader
 import cv2
 import numpy as np
@@ -24,15 +26,6 @@ data_transforms = {
     ]),
 }
 
-# Load our datasets (local string)
-data_dir = 'D:/Downloads/Programmieren/tiny-imagenet-200'
-image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x])
-                  for x in ['train', 'val']}
-dataloaders = {x: DataLoader(image_datasets[x], batch_size=32, shuffle=True, num_workers=4)
-               for x in ['train', 'val']}
-dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
-class_names = image_datasets['train'].classes
-
 # Use GPU if available
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -40,14 +33,14 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model_ft = models.resnet50(pretrained=True)
 
 # Modify the final layer to match the number of classes in the dataset
-num_ftrs = model_ft.fc.in_features
-model_ft.fc = nn.Linear(num_ftrs, len(class_names))
+#num_ftrs = model_ft.fc.in_features
+#model_ft.fc = nn.Linear(num_ftrs, len(class_names))
 
 model_ft = model_ft.to(device)
 
 # Define loss function and optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
+#criterion = nn.CrossEntropyLoss()
+#optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
 
 # Training the model
 def train_model(model, criterion, optimizer, num_epochs=25):
@@ -112,14 +105,42 @@ def classify_image(pImage):
         outputs = model_ft(image_tensor)
         _, preds = torch.max(outputs, 1)
     
-    # Get the class name
-    class_name = class_names[preds[0]]
-    
-    return class_name
+    # Return the predicted class index
+    return preds.item()
+    # Define a list of class names (replace with your actual class names)
+    class_names = ['class1', 'class2', 'class3', 'class4', 'class5']
+
+    # Return the predicted class name
+    return class_names[preds.item()]
 
 if __name__ == '__main__':
     # Train the model
-    model_ft = train_model(model_ft, criterion, optimizer_ft, num_epochs=25)
+    #model_ft = train_model(model_ft, criterion, optimizer_ft, num_epochs=25)
 
     # Save the trained model
-    torch.save(model_ft.state_dict(), 'resnet50_image_classifier.pth')
+    #torch.save(model_ft.state_dict(), 'resnet50_image_classifier.pth')
+
+    # classify shiba image
+    # image = cv2.imread(os.path.join(os.path.dirname(__file__), 'testImages/shiba.jpg'))
+    # image = cv2.resize(image, (224, 224))
+    # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # class_name = classify_image(image)
+    # print(class_name)
+    image = decode_image(os.path.join(os.path.dirname(__file__), 'testImages/shiba.jpg'))
+    # Step 1: Initialize model with the best available weights
+    weights = ResNet50_Weights.DEFAULT
+    model = resnet50(weights=weights)
+    model.eval()
+
+    # Step 2: Initialize the inference transforms
+    preprocess = weights.transforms()
+
+    # Step 3: Apply inference preprocessing transforms
+    batch = preprocess(image).unsqueeze(0)
+
+    # Step 4: Use the model and print the predicted category
+    prediction = model(batch).squeeze(0).softmax(0)
+    class_id = prediction.argmax().item()
+    score = prediction[class_id].item()
+    category_name = weights.meta["categories"][class_id]
+    print(f"{category_name}: {100 * score:.1f}%")
