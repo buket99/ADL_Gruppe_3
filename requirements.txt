@@ -1,5 +1,9 @@
 torch
 torchvision
-opencv-python
-numpy
+pytorch-lightning
+scikit-learn
+matplotlib
 Pillow
+numpy
+opencv-python
+kagglehub

@@ -1,0 +1,6 @@
+
+*.yaml
+lightning_logs/version_3/metrics.csv
+lightning_logs/version_4/checkpoints/epoch=3-step=2500.ckpt
+lightning_logs/version_4/metrics.csv
+bottle_fine_tuned_alexnet.pth
