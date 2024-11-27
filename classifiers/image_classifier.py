@@ -10,7 +10,8 @@ from torch.utils.data import DataLoader, random_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 
-def main():
+
+def main(model_name="alexnet"):
     # Kaggle dataset download
     dataset_path = kagglehub.dataset_download("vencerlanz09/bottle-synthetic-images-dataset")
     print("Dataset downloaded to:", dataset_path)
@@ -18,7 +19,7 @@ def main():
     # Dataset preparation
     data_dir = f"{dataset_path}/Bottle Images/Bottle Images"  # Root directory for the dataset
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),  # AlexNet input size
+        transforms.Resize((224, 224)),  # Common input size
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # ImageNet normalization
     ])
@@ -34,14 +35,19 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
     val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=4)
 
-    # PyTorch Lightning module for AlexNet
-    class FineTunedAlexNet(pl.LightningModule):
-        def __init__(self, num_classes):
-            super(FineTunedAlexNet, self).__init__()
-            # Load pre-trained AlexNet
-            self.model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
-            # Replace the last layer with a new one matching the number of classes
-            self.model.classifier[6] = nn.Linear(4096, num_classes)
+    # PyTorch Lightning module
+    class FineTunedModel(pl.LightningModule):
+        def __init__(self, model_name, num_classes):
+            super(FineTunedModel, self).__init__()
+            self.model_name = model_name
+            if model_name == "alexnet":
+                self.model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
+                self.model.classifier[6] = nn.Linear(4096, num_classes)
+            elif model_name == "resnet50":
+                self.model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=True)
+                self.model.fc = nn.Linear(2048, num_classes)
+            else:
+                raise ValueError("Unsupported model. Choose either 'alexnet' or 'resnet50'.")
             self.criterion = nn.CrossEntropyLoss()
 
         def forward(self, x):
@@ -65,12 +71,12 @@ def main():
             return optim.Adam(self.model.parameters(), lr=1e-4)
 
     # Model training
-    model = FineTunedAlexNet(num_classes=len(dataset.classes))  # Number of classes matches the folder structure
+    model = FineTunedModel(model_name, num_classes=len(dataset.classes))  # Number of classes matches the folder structure
     trainer = pl.Trainer(max_epochs=4, devices=1, accelerator='gpu' if torch.cuda.is_available() else 'cpu')
     trainer.fit(model, train_loader, val_loader)
 
     # Save the trained model
-    model_save_path = "bottle_fine_tuned_alexnet.pth"
+    model_save_path = f"bottle_fine_tuned_{model_name}.pth"
     torch.save(model.model.state_dict(), model_save_path)
     print(f"Model saved to {model_save_path}")
 
@@ -100,5 +106,7 @@ def main():
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=4)
     evaluate_and_plot_confusion_matrix(model.model, test_loader, dataset.classes)
 
+
 if __name__ == '__main__':
-    main()
+    # Choose the model: 'alexnet' or 'resnet50'
+    main(model_name="resnet50")
