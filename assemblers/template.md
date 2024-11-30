@@ -1,15 +1,15 @@
 ---
-title: "Generated Article"
-author: "LangChain Automation"
-date: "`date`"
+title: "{title}"
+author: "{author}"
+date: "{date}"
 ---
 
-# Article: {{ topic }}
+# Article: {topic}
 
-{{ article }}
+{article}
 
 ---
 
 ## Image Descriptions
 
-{{ image_descriptions }}
+{image_descriptions}
