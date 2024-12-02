@@ -46,8 +46,11 @@ def main(model_name="alexnet"):
             elif model_name == "resnet50":
                 self.model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=True)
                 self.model.fc = nn.Linear(2048, num_classes)
+            elif model_name == "vit":
+                self.model = torch.hub.load('pytorch/vision:v0.10.0', 'vit_b_16', pretrained=True)
+                self.model.heads.head = nn.Linear(self.model.heads.head.in_features, num_classes)
             else:
-                raise ValueError("Unsupported model. Choose either 'alexnet' or 'resnet50'.")
+                raise ValueError("Unsupported model. Choose either 'alexnet', 'resnet50', or 'vit'.")
             self.criterion = nn.CrossEntropyLoss()
 
         def forward(self, x):
@@ -108,5 +111,5 @@ def main(model_name="alexnet"):
 
 
 if __name__ == '__main__':
-    # Choose the model: 'alexnet' or 'resnet50'
-    main(model_name="resnet50")
+    # Choose the model: 'alexnet', 'resnet50', or 'vit'
+    main(model_name="vit")
