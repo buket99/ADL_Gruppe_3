@@ -1,0 +1,40 @@
+Model: alexnet
+Training Time: 151.30 seconds
+Validation Accuracy: 0.8299999833106995
+Model saved at: bottle_fine_tuned_alexnet.pth
+----------------------------------------
+Model: resnet50
+Training Time: 415.81 seconds
+Validation Accuracy: 0.9900000095367432
+Model saved at: bottle_fine_tuned_resnet50.pth
+----------------------------------------
+Model: vit
+Training Time: 1083.58 seconds
+Validation Accuracy: 0.9100000262260437
+Model saved at: bottle_fine_tuned_vit.pth
+----------------------------------------
+Model: vit
+Training Time: 1064.15 seconds
+Validation Accuracy: 0.949999988079071
+Model saved at: bottle_fine_tuned_vit.pth
+----------------------------------------
+Model: vit
+Training Time: 1115.83 seconds
+Validation Accuracy: 0.9900000095367432
+Model saved at: bottle_fine_tuned_vit.pth
+----------------------------------------
+Model: vit
+Training Time: 1075.63 seconds
+Validation Accuracy: 0.9900000095367432
+Model saved at: bottle_fine_tuned_vit.pth
+----------------------------------------
+Model: alexnet
+Training Time: 144.58 seconds
+Validation Accuracy: 0.7900000214576721
+Model saved at: bottle_fine_tuned_alexnet.pth
+----------------------------------------
+Model: alexnet
+Training Time: 173.02 seconds
+Validation Accuracy: 0.817307710647583
+Model saved at: bottle_fine_tuned_alexnet.pth
+----------------------------------------

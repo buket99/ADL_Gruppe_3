@@ -1,0 +1,15 @@
+Confusion Matrix:
+[3787   52  191  247  723]
+[  40 4901    0   53    6]
+[ 326   32 3300  220 1122]
+[ 147   54   99 3975  725]
+[ 118    6  168  325 4383]
+
+Overall Accuracy: 0.8138
+
+Class-wise Accuracy:
+Beer Bottles: 0.7574
+Plastic Bottles: 0.9802
+Soda Bottle: 0.6600
+Water Bottle: 0.7950
+Wine Bottle: 0.8766
