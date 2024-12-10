@@ -64,7 +64,7 @@ def generate_image_description(pClassification, image_number):
                 included in the article. This is the description for image number {image_number}.
 
                 Be specific about the following aspects:
-                - What is in the foreground?
+            ^    - What is in the foreground?
                 - What is in the background?
                 - What are the colors, textures, and lighting like?
                 - If there are any objects, describe their arrangement and details.
@@ -93,12 +93,7 @@ def generate_article_content(pClassification):
         paragraph = generate_paragraph(pClassification, section)
         paragraphs.append(paragraph)
 
-    # Combine all paragraphs
-    article = "\n\n".join(paragraphs)
-    # Check the word count and expand if necessary
-    article = check_word_count(article, min_words=1000, pClassification=pClassification)
-
-    return article
+    return paragraphs
 
 
 # Function to check and expand word count
@@ -117,22 +112,13 @@ def check_word_count(article, min_words=1000, pClassification=""):
 
 
 if __name__ == "__main__":
-    # start_time = time.perf_counter()
     topic = "Wine Bottle"
     article = generate_article_content(topic)
-    # end_time = time.perf_counter()
-    # elapsed_time = end_time - start_time
-    # print("Elapsed time for article content: ", elapsed_time)
-
-    # start_time = time.perf_counter()
     image_descriptions = []
     for i in range(1, 5):
         print(f"Generating description for image {i}...")
         description = generate_image_description(topic, i)
         image_descriptions.append(f"Image {i} Description: \n{description}")
-    # end_time = time.perf_counter()
-    # elapsed_time = end_time - start_time
-    # print("Elapsed time for image descriptions: ", elapsed_time)
 
     output = article + "\n\n" + "\n\n".join(image_descriptions)
     # Save the output to a file

@@ -28,19 +28,26 @@ def convert_markdown_to_pdf(markdown_file, pdf_file):
 
 if __name__ == "__main__":
     topic = "Wine Bottle"
-    article = generate_article_content(topic)
-    # image_description = generate_image_description(topic)
+    article_paragraphs = generate_article_content(topic)
+    image_descriptions = [generate_image_description(topic, i) for i in range(1, 5)]
 
     replacements = {
-        "title": "Generated Article",
-        "author": "LangChain Automation",
+        "title": f"Article about {topic}",
+        "author": "add author",
         "date": time.strftime("%Y-%m-%d"),
         "topic": topic,
-        "article": article,
-        "image_descriptions": "to be added" # TODO
+        "article_paragraph_1": article_paragraphs[0],
+        "article_paragraph_2": article_paragraphs[1],
+        "article_paragraph_3": article_paragraphs[2],
+        "article_paragraph_4": article_paragraphs[3],
+        "image_description_1": image_descriptions[0],
+        "image_description_2": image_descriptions[1],
+        "image_description_3": image_descriptions[2],
+        "image_description_4": image_descriptions[3],
     }
 
     markdown_file = "output.md"
     pdf_file = "output.pdf"
     create_markdown_file_from_template("template.md", markdown_file, replacements)
     convert_markdown_to_pdf(markdown_file, pdf_file)
+    print("done")
