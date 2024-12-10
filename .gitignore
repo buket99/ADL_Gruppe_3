@@ -1,0 +1,6 @@
+# Diffusion Model config file
+diffusion_model/config.fg
+
+
+# Agents config file/OpenAI Key
+agents/.env
