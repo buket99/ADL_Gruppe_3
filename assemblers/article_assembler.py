@@ -28,6 +28,7 @@ def convert_markdown_to_pdf(markdown_file, pdf_file):
 
 if __name__ == "__main__":
     topic = "Coke" # TODO: here is topic/classification
+    print("start generated paragraphs..")
     article_paragraphs = generate_article_content(topic)
     image_descriptions = [
         generate_image_description(topic, article_paragraphs[i], i + 1) for i in range(len(article_paragraphs))

@@ -83,7 +83,7 @@ def generate_article_content(pClassification):
     # Define the sections for the article
     sections = [
         "composition, origins, and production",
-        "cultural, historical, and practical Importance",
+        "cultural and practical Importance",
         "Sensory Experience and Effects",
         "Global Influence and Trade"
     ]
