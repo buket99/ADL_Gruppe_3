@@ -38,3 +38,23 @@ Training Time: 173.02 seconds
 Validation Accuracy: 0.817307710647583
 Model saved at: bottle_fine_tuned_alexnet.pth
 ----------------------------------------
+Model: alexnet
+Training Time: 825.29 seconds
+Validation Accuracy: 0.8091872930526733
+Model saved at: bottle_fine_tuned_alexnet.pth
+----------------------------------------
+Model: alexnet
+Training Time: 583.40 seconds
+Validation Accuracy: 0.8098360896110535
+Model saved at: bottle_fine_tuned_alexnet.pth
+----------------------------------------
+Model: alexnet
+Training Time: 1070.34 seconds
+Validation Accuracy: 0.8165137767791748
+Model saved at: bottle_fine_tuned_alexnet.pth
+----------------------------------------
+Model: alexnet
+Training Time: 2498.02 seconds
+Validation Accuracy: 0.792792797088623
+Model saved at: bottle_fine_tuned_alexnet.pth
+----------------------------------------

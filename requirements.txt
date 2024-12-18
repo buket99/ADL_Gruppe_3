@@ -7,5 +7,7 @@ Pillow
 numpy
 opencv-python
 kagglehub
-bs4
+selenium
 requests
+beautifulsoup4
+lxml
