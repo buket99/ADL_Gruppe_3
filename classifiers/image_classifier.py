@@ -336,14 +336,35 @@ class_names = ["Beer Bottles", "Coffee", "Coke", "Drinking Bottle", "Energy Drin
                "Orange Juice", "Orange Soda", "Tea", "Water", "Wine"]
 
 
-def classify_image(image_path, model_path="bottle_fine_tuned_alexnet.pth"):
-    # Laden des vortrainierten AlexNet-Modells
-    model = models.alexnet(pretrained=False)
-    model.classifier[6] = torch.nn.Linear(model.classifier[6].in_features, len(class_names))  # Anzahl der Klassen anpassen
+def load_model(model_type, model_path):
+    """
+    Load the specified model (AlexNet, ResNet50, or Vision Transformer) with custom weights.
+    """
+    if model_type == "alexnet":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=False)
+        model.classifier[6] = torch.nn.Linear(model.classifier[6].in_features, len(class_names))
+    elif model_type == "resnet50":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=False)
+        model.fc = torch.nn.Linear(model.fc.in_features, len(class_names))
+    elif model_type == "vit":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'vit_b_16', pretrained=False)
+        model.heads.head = torch.nn.Linear(model.heads.head.in_features, len(class_names))
+    else:
+        raise ValueError("Unsupported model type. Choose from 'alexnet', 'resnet50', or 'vit'.")
+
     model.load_state_dict(torch.load(model_path))
     model.eval()
+    return model
 
-    # Bildvorverarbeitung
+
+def classify_image(image_path, model_type="alexnet", model_path="model.pth"):
+    """
+    Classify a single image using the specified model.
+    """
+    # Load the specified model
+    model = load_model(model_type, model_path)
+
+    # Preprocess the image
     preprocess = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
@@ -352,23 +373,26 @@ def classify_image(image_path, model_path="bottle_fine_tuned_alexnet.pth"):
     ])
     image = Image.open(image_path)
     image = preprocess(image)
-    image = image.unsqueeze(0)  # Batch-Dimension hinzufügen
+    image = image.unsqueeze(0)  # Add batch dimension
 
-    # Bild klassifizieren
+    # Classify the image
     with torch.no_grad():
         outputs = model(image)
         _, predicted = torch.max(outputs, 1)
 
-    # Rückgabe des Klassennamens
+    # Return the class name
     predicted_class = class_names[predicted.item()]
     return predicted_class
 
 
-def classify_images_in_directory(directory_path, model_path="bottle_fine_tuned_alexnet.pth"):
+def classify_images_in_directory(directory_path, model_type="alexnet", model_path="model.pth"):
+    """
+    Classify all images in a directory using the specified model.
+    """
     for filename in os.listdir(directory_path):
         if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')):
             image_path = os.path.join(directory_path, filename)
-            prediction = classify_image(image_path, model_path)
+            prediction = classify_image(image_path, model_type, model_path)
             print(f"Image: {filename}, Prediction: {prediction}")
 
 
@@ -384,6 +408,7 @@ def preprocess_image(image_path):
     image = Image.open(image_path)
     image = preprocess(image).unsqueeze(0)  # Add batch dimension
     return image
+
 
 def generate_saliency_map(model, image_path, class_names):
     """
@@ -443,18 +468,17 @@ def generate_saliency_map(model, image_path, class_names):
 
     plt.show()
 
-def classify_and_visualize_with_saliency(model_path, image_path, class_names):
+
+def classify_and_visualize_with_saliency(model_path, image_path, model_type, class_names):
     """
     Classify an image and generate the saliency map.
     """
     # Load the trained model
-    model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=False)
-    model.classifier[6] = torch.nn.Linear(model.classifier[6].in_features, len(class_names))
-    model.load_state_dict(torch.load(model_path))
-    model.eval()
+    model = load_model(model_type, model_path)
 
     # Generate the saliency map
     generate_saliency_map(model, image_path, class_names)
+
 
 if __name__ == '__main__':
     # Specify the directory containing the test images
