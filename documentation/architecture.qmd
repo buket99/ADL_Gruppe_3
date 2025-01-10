@@ -8,14 +8,37 @@ This chapter describes the architecture of the system.
 
 ## Modules 
 
-[Describe the modules of your system. If you added/removed/changed modules, explain why and change the chapter structure accordingly. A module description contains: Role in the overall system, input/output data, data flow, used packages, specific design decisions, ...]
+This section describes the individual modules of the system.
 
 ### Webcam 
 
 ### Object Detector 
 
-[Also describe the used architectures (see team-project presentation) in short (most important advances)]
+#### Role in the Overall System
+The image classification module plays a critical role in identifying bottle types within the system. It provides accurate predictions for classifying bottles into predefined categories, serving as the foundation for subsequent tasks like essay generation and image synthesis.
 
+#### Input/Output Data
+- **Input:** Preprocessed images (224x224 resolution) from either the synthetic dataset or custom-scraped images.
+- **Output:** Predicted class labels, indicating the bottle type (e.g., Water, Wine, Coke).
+
+#### Data Flow
+1. **Data Ingestion:** Images are loaded using the PyTorch `ImageFolder` class and split into training, validation, and testing datasets.
+2. **Preprocessing:** Images undergo resizing, normalization (using ImageNet statistics), and conversion to tensors.
+3. **Model Training:** Fine-tuned models (AlexNet, ResNet50, or Vision Transformer) are trained using PyTorch Lightning, optimizing for classification accuracy.
+4. **Prediction:** The trained model predicts the class label for unseen images. Optionally, saliency maps visualize model focus areas during classification.
+
+#### Used Packages
+Key libraries include:
+- **PyTorch/Torchvision:** Model definition, data loading, and transformations.
+- **PyTorch Lightning:** Simplified training and evaluation workflows.
+- **Scikit-learn:** Evaluation metrics (e.g., confusion matrix).
+- **Selenium/Requests:** Dataset additions through web scraping Google.
+
+#### Specific Design Decisions
+- **Pretrained Models:** AlexNet, ResNet50, and Vision Transformer were chosen for their performance trade-offs between accuracy and computational cost.
+- **Custom Dataset Augmentation:** To expand class diversity, a web scraper was developed to retrieve images from Google Images.
+- **Evaluation:** A combination of accuracy metrics, confusion matrices, and saliency maps ensures a robust evaluation of model performance.
+- **Efficiency Considerations:** AlexNet was primarily used for development due to limited hardware, while more complex models (e.g., Vision Transformers) were tested on university lab GPUs.
 
 ::: {.callout-tip}
 You can reference literature from bibtex files (references.bib). Example: Use @knuth84 for additional discussion of literate programming.
