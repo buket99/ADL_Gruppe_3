@@ -1,0 +1,6 @@
+05.12.2024
+Model: vit
+Training Time: 1205.08 seconds
+Validation Accuracy: 0.9200000166893005
+Model saved at: bottle_fine_tuned_vit.pth
+----------------------------------------
