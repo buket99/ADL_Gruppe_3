@@ -12,12 +12,12 @@ API_KEY = os.getenv("OPEN_AI_API")
 
 # Initialize the language model
 llm = ChatOpenAI(
-    model="gpt-4",
+    model="gpt-3.5-turbo",  # TODO: here you decide the model
     temperature=0.5,  # reduced for more consistent output
     max_tokens=4000,  # increased for longer responses
     timeout=120,
     max_retries=2,
-    api_key=API_KEY
+    api_key=API_KEY # TODO: here is API_Key for OpenAI
 )
 
 # Define LangChain tools
@@ -56,20 +56,22 @@ def generate_paragraph(pClassification, section):
     return response.content
 
 
-def generate_image_description(pClassification, image_number):
+def generate_image_description(pClassification, paragraph, image_number):
     message = [
         SystemMessage(content="You are an expert in creating detailed image descriptions."),
         HumanMessage(content=f"""
-                Imagine a visually engaging image related to "{pClassification}". Describe it in detail as if it were 
-                included in the article. This is the description for image number {image_number}.
-
+                Imagine a visually engaging image related to "{pClassification}". This image should also complement the 
+                following paragraph:
+                {paragraph}
+                Describe the image in detail as if it were included in the article. This is the description for image 
+                number {image_number}.
                 Be specific about the following aspects:
                 - What is in the foreground?
                 - What is in the background?
                 - What are the colors, textures, and lighting like?
                 - If there are any objects, describe their arrangement and details.
-
-                Ensure the description is vivid and helps the reader visualize the image.
+                Ensure the description is vivid and helps the reader visualize the image while aligning with the 
+                paragraph content.
                 """)
     ]
     response = llm.invoke(message)
@@ -80,10 +82,10 @@ def generate_image_description(pClassification, image_number):
 def generate_article_content(pClassification):
     # Define the sections for the article
     sections = [
-        "design, material, and history",
-        "cultural or practical significance",
-        "the liquid inside",
-        "summary of the topic"
+        "composition, origins, and production",
+        "cultural and practical Importance",
+        "Sensory Experience and Effects",
+        "Global Influence and Trade"
     ]
 
     # Generate each paragraph
@@ -93,50 +95,18 @@ def generate_article_content(pClassification):
         paragraph = generate_paragraph(pClassification, section)
         paragraphs.append(paragraph)
 
-    # Combine all paragraphs
-    article = "\n\n".join(paragraphs)
-    # Check the word count and expand if necessary
-    article = check_word_count(article, min_words=1000, pClassification=pClassification)
-
-    return article
-
-
-# Function to check and expand word count
-def check_word_count(article, min_words=1000, pClassification=""):
-    word_count = len(article.split())
-    if word_count < min_words:
-        print(f"Word count ({word_count}) is below the minimum. Expanding content...")
-        # Add more details to reach the required word count
+    # Check total word count and expand if necessary
+    min_words = 1000
+    total_word_count = sum(len(p.split()) for p in paragraphs)  # Calculate total words
+    while total_word_count < min_words:
+        print(f"Word count ({total_word_count}) is below the minimum ({min_words}). Expanding content...")
         additional_message = HumanMessage(
-            content=f"The article is currently {word_count} words long. Add a new paragraph with a fun fact about "
-                    f"'{pClassification}' to reach at least {min_words} words."
+            content=f"The article is currently {total_word_count} words long. Add a new paragraph with a fun fact about "
+                    f"'{pClassification}' to help reach at least {min_words} words."
         )
         response = llm.invoke([SystemMessage(content="Expand the article further."), additional_message])
-        return article + "\n\n" + response.content
-    return article
+        print(f"LLM response: {response}")
+        paragraphs.append(response.content)
+        total_word_count = sum(len(p.split()) for p in paragraphs)  # Recalculate total words
 
-
-if __name__ == "__main__":
-    # start_time = time.perf_counter()
-    topic = "Wine Bottle"
-    article = generate_article_content(topic)
-    # end_time = time.perf_counter()
-    # elapsed_time = end_time - start_time
-    # print("Elapsed time for article content: ", elapsed_time)
-
-    # start_time = time.perf_counter()
-    image_descriptions = []
-    for i in range(1, 5):
-        print(f"Generating description for image {i}...")
-        description = generate_image_description(topic, i)
-        image_descriptions.append(f"Image {i} Description: \n{description}")
-    # end_time = time.perf_counter()
-    # elapsed_time = end_time - start_time
-    # print("Elapsed time for image descriptions: ", elapsed_time)
-
-    output = article + "\n\n" + "\n\n".join(image_descriptions)
-    # Save the output to a file
-    with open("output.txt", "w") as file:
-        file.write(str(output))
-
-    print("done")
+    return paragraphs
