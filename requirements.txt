@@ -1,3 +1,13 @@
+# Agents
+langchain
+langchain-community
+python-dotenv
+wikipedia
+duckduckgo-search
+openai
+# Assemblers
+
+# Classifiers
 torch
 torchvision
 pytorch-lightning
@@ -11,3 +21,18 @@ selenium
 requests
 beautifulsoup4
 lxml
+
+# Diffusion Model
+diffusers
+transformers
+torch
+torchvision
+Pillow
+accelerate
+protobuf
+sentencepiece
+
+#main
+opencv-python
+PyQt5
+

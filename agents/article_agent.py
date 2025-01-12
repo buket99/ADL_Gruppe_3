@@ -1,9 +1,8 @@
 from langchain.agents import initialize_agent, Tool, AgentType
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.schema import SystemMessage, HumanMessage
-from langchain.tools import DuckDuckGoSearchRun
+from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.utilities import WikipediaAPIWrapper
-import time
 import os
 from dotenv import load_dotenv
 
@@ -83,7 +82,7 @@ def generate_article_content(pClassification):
     # Define the sections for the article
     sections = [
         "composition, origins, and production",
-        "cultural and practical Importance",
+        "cultural, historical, and practical Importance",
         "Sensory Experience and Effects",
         "Global Influence and Trade"
     ]

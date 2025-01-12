@@ -1,0 +1,46 @@
+# Domain
+[describe the chosen article domain, e.g. ikea-like user manuals or cook books, ...]
+
+## Article Structure  
+[How is the generated article structured?]
+
+## Data Set 
+The dataset used in our project evolved through multiple iterations, reflecting a combination of external resources, expert feedback, and self-constructed solutions. Initially, following our instructor’s recommendation, we explored common platforms like Kaggle and Roboflow Universe. We identified bottles as a suitable focus due to their everyday availability and chose the "Bottle Synthetic Images Dataset" from Kaggle for our first version. This dataset, augmented synthetically, comprised five classes—beer, plastic, soda, water, and wine bottles—with 5,000 images per class, totaling 25,000 images. Using AlexNet, we achieved an impressive average accuracy of 99% on the test set. However, based on our instructor’s advice, this dataset was deemed overly large for five classes, prompting us to increase the number of categories.
+
+After extensive searching, we concluded that no existing dataset adequately met our requirements. Consequently, we developed a custom web scraper, incorporating a function named scrape_class(...) to collect a fixed number of images from Google Images. This effort produced a second version of our dataset, expanding to 10 classes, including orange juice, coffee, tea, milk, and various sodas, with approximately 150 images per class. Testing on this dataset yielded an overall accuracy of 92.1% using AlexNet. However, saliency maps revealed issues with the Google Images data, primarily due to its reliance on stock photos with sharp contrasts and idealized bottle appearances. To address this, we captured around 20 additional images per class using smartphone cameras.
+
+This refinement resulted in our third and final dataset, achieving an AlexNet accuracy of 95.79%. We also added another class with energy drinks (e.g. Red Bull) which makes our final 11 classes. Limited by hardware constraints during earlier experiments, we exclusively used AlexNet due to its efficiency, completing training in roughly 10 minutes. For the final dataset, leveraging CUDA-enabled university lab hardware, we tested Vision Transformers and ResNet50. ResNet50 achieved 97.34% accuracy, while Vision Transformers delivered the best performance at 98.05%, albeit with significantly longer training times.
+
+### Number of Elements per Class
+
+The dataset contains the following number of elements for each class:
+
+- **Water:** 165 elements
+- **Wine:** 157 elements
+- **Tea:** 129 elements
+- **Orange Soda:** 122 elements
+- **Orange Juice:** 119 elements
+- **Milk:** 149 elements
+- **Energy Drink:** 131 elements
+- **Drinking Bottle:** 155 elements
+- **Coke:** 284 elements
+- **Coffee:** 127 elements
+- **Beer:** 153 elements
+
+Below are three example images from our dataset:
+
+### Energy Drink
+![Energy Drink](images/example-images/energy-drink.jpg)
+
+### Orange Juice
+![Orange Juice](images/example-images/orange-juice.jpg)
+
+### Milk
+![Milk](images/example-images/milk.jpg)
+
+::: {.callout-tip}
+You can use figures and reference them in the text (but only outside of tip-sections :D): 
+:::
+![Elephants.](images/elephants.png){#fig-elephants}
+
+This is how references are used: @fig-elephants

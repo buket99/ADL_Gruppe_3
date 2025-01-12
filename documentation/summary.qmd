@@ -1,0 +1,8 @@
+# Summary
+This project is part of the advanced deep learning course at the university of applied science in munich.
+During this course we have developed a program that combines image recognition, large language models (LLMs), and diffusion models to provide a seamless integration of AI-based analysis, content generation, and visual creativity.
+
+The program allows you to take a picture of a bottle (won't work or produce gibberish if you don't use a bottle), which will be classified into one of 11 predefined categories.
+Once a bottle is classified, the system leverages an LLM to generate a 1,000-word essay detailing the specific characteristics, history, and uses of the identified bottle type. Additionally, the LLM creates prompts for a diffusion model, which then generates unique and visually compelling images tailored to the recognized bottle category.
+
+To streamline output presentation, all generated content, including the essay and images, is processed through a markdown template and compiled into a formatted PDF document. 
