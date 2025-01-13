@@ -4,45 +4,65 @@ This chapter contains important evaluation results for the modules of the system
 
 ## Image Classifier
 
-[Show evaluation results as described in the team-project slides]
+\[Show evaluation results as described in the team-project slides]
 
-[Describe how you get to ds2 based on the results on ds1]
+\[Describe how you get to ds2 based on the results on ds1]
 
-## Article Agent 
+## Article Agent
 
-[Show some best- and worst-case examples and their timings]
+\[Show some best- and worst-case examples and their timings]
 
-## Diffusion Model 
+## Diffusion Model
 
-The Diffusion Model was used to generate images based on text prompts derived from various aspects of "Water". These prompts were designed to capture different themes related to water, such as its composition, cultural significance, sensory experience, and global influence.
+The Diffusion Model was evaluated for its ability to generate images based on text prompts derived from various aspects of the classified objects, with a focus on quality and generation time. Two different models were tested: `runwayml/stable-diffusion-v1-5` (mid) and `stabilityai/stable-diffusion-2-1-base` (fast).
 
-Below are some examples of generated images along with their respective prompts:
+### Model: `runwayml/stable-diffusion-v1-5` (mid)
 
-### Example 1: Composition, Origins, and Production
+This model produced high-quality images that closely matched the descriptive prompts.
+
+#### Example Prompts and Results:
+
+##### Example 1: Composition, Origins, and Production
 
 **Prompt:** "The image depicts a mesmerizing aerial view of a vast expanse of crystal-clear water, symbolizing the essence of life on Earth. In the foreground, gentle ripples can be seen on the surface of the water, reflecting the sunlight and creating a shimmering effect. The water appears deep blue in color, with hints of turquoise near the shorelines, showcasing its purity and tranquility..."
 
 **Image:**
-![Generated image for the prompt on water composition](diffusion_model/output/output_small_from_text.png)
+![Generated image for the prompt on water composition](images/example-images/image_1_for_Water_stable-diffusion-v1-5\ \(mid\).png)
 
-### Example 2: Cultural, Historical, and Practical Importance
+##### Example 2: Cultural, Historical, and Practical Importance
 
 **Prompt:** "In the foreground of the image, a serene and sacred river flows gently, reflecting the soft hues of the sky above. The water appears crystal clear, symbolizing purity and life, as it meanders gracefully through a lush landscape..."
 
 **Image:**
-![Generated image for the prompt on water's cultural significance](diffusion_model/output/image_2_for_Water_stable-diffusion-v1-5\ \(mid\).png)
+![Generated image for the prompt on water's cultural significance](images/example-images/image_2_for_Water_stable-diffusion-v1-5\ \(mid\).png)
 
-### Example 3: Sensory Experience and Effects
+##### Example 3: Sensory Experience and Effects
+
 **Prompt:** "In the foreground of the image, a serene lake glistens under the gentle sunlight, creating a mesmerizing play of light and shadow on the water's surface..."
 
-**Generation time**: The average time to generate an image is around 1 minute and 23 seconds. This varies slightly depending on the complexity of the prompt.
+**Generation Time:** The average time to generate an image using this model was around **1 minute and 23 seconds**.
 
-### Model Used
+### Model: `stabilityai/stable-diffusion-2-1-base` (fast)
 
-The `runwayml/stable-diffusion-v1-5` model was used for image generation, operating on an Apple M1 device utilizing the `mps` backend.
+Despite being labeled as "fast," this model took significantly longer to generate images and produced outputs with a noticeable cartoon-like quality, which was less desirable for our application.
 
-These examples demonstrate the capability of the Diffusion Model to interpret textual descriptions and generate corresponding visual representations. The model successfully captures the essence of the prompts, producing images that reflect the described scenes with reasonable detail and coherence.
+#### Example Prompt and Result:
 
-## Article Assembler 
+##### Example: Cultural, Historical, and Practical Importance
 
-[Show some generation examples and timings that show how long the entire generation process takes]
+**Prompt:** "In the foreground of the image, there is a bustling port scene filled with large cargo ships being loaded with crates of milk and dairy products. Workers in uniform are seen carrying and stacking these crates onto the ships, showcasing the active trade of dairy goods on a global scale. The workers are diverse, representing the international nature of the milk trade..."
+
+**Image:**
+![Generated image with the 'fast' model](images/example-images/image_2_stable-diffusion-2-1-base\ (fast).png)
+
+**Generation Time:** The average time to generate an image using this model was around **3 hours**. This model was significantly slower compared to the `runwayml/stable-diffusion-v1-5` model.
+
+### Conclusion
+
+The `runwayml/stable-diffusion-v1-5` (mid) model demonstrated superior performance in terms of both image quality and generation time for our specific use case. It successfully captured the essence of the prompts, producing detailed and coherent images. In contrast, the `stabilityai/stable-diffusion-2-1-base` (fast) model, while expected to be faster, exhibited much longer generation times and produced images of lower quality with an undesirable cartoon-like aesthetic.
+
+Both models were tested on an Apple M1 device utilizing the `mps` backend.
+
+## Article Assembler
+
+\[Show some generation examples and timings that show how long the entire generation process takes]

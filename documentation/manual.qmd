@@ -33,7 +33,6 @@ docker build -t adl-gruppe-3 .
 
 This command will create a Docker image named `adl-gruppe-3` based on the provided `Dockerfile`. The Dockerfile includes all necessary dependencies, including Pandoc for document conversion.
 
-
 ### Step 3: Run the Docker Container
 
 After building the image, run the Docker container with the following command:
@@ -44,43 +43,62 @@ docker run -it --device=/dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix
 
 This command does the following:
 
-- `docker run -it`: Runs a container in interactive mode with a pseudo-TTY.
-- `--device=/dev/video0:/dev/video0`: Gives the container access to the host's webcam.
-- `-v /tmp/.X11-unix:/tmp/.X11-unix:rw`: Shares the X11 socket, allowing the container to display GUI applications on the host.
-- `-e DISPLAY=$DISPLAY`: Sets the display environment variable.
+-   `docker run -it`: Runs a container in interactive mode with a pseudo-TTY.
+-   `--device=/dev/video0:/dev/video0`: Gives the container access to the host's webcam.
+-   `-v /tmp/.X11-unix:/tmp/.X11-unix:rw`: Shares the X11 socket, allowing the container to display GUI applications on the host.
+-   `-e DISPLAY=$DISPLAY`: Sets the display environment variable.
 
 ::: {.callout-note}
 This setup assumes you have a webcam available at `/dev/video0`. If your webcam is at a different path, adjust the command accordingly. Also, for the GUI to work, you need an X server running on your host. On Linux, this is usually the case. On macOS, you might need to install XQuartz. On Windows, you may need to use WSL2 with an X server like VcXsrv or X410.
 
 Please test this setup and let me know if it works. If you encounter issues, we can adjust the instructions accordingly.
 :::
+
 ### (Optional) Step 4: Manual Installation (Without Docker)
 
 If you prefer not to use Docker, you can install the system manually. This is not recommended as you may encounter dependency issues. But here are the steps:
 
 1. **Install system dependencies:**
 
-```bash
-sudo apt-get update && sudo apt-get install -y \
-    pandoc \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    libsm6 \
-    libxrender1 \
-    libxext6
-```
+    ```bash
+    sudo apt-get update && sudo apt-get install -y \
+        pandoc \
+        libgl1-mesa-glx \
+        libglib2.0-0 \
+        libsm6 \
+        libxrender1 \
+        libxext6
+    ```
 
 2. **Install Python dependencies:**
 
-```bash
-pip install --no-cache-dir -r requirements.txt
-```
+    ```bash
+    pip install --no-cache-dir -r requirements.txt
+    ```
 
 ## Usage
 
 This section describes the steps required to create an article using the system.
 
-### Step 1: Launch the Application
+### Step 1: Set your OpenAI API Key
+
+**Before launching the application**, you need to provide your OpenAI API key.
+
+1. **Create a file named `.env`** inside the `agents` directory.
+2. **Open the `.env` file** with a text editor and add your API key in the following format:
+
+    ```
+    OPENAI_API_KEY=your_api_key_here
+    ```
+
+    Replace `your_api_key_here` with your actual OpenAI API key.
+3. **Save the `.env` file.**
+
+::: {.callout-important}
+Without a valid OpenAI API key in the `agents/.env` file, the article generation functionality will not work.
+:::
+
+### Step 2: Launch the Application
 
 If you are using Docker, start the container as described in the installation section. If you installed manually, navigate to the project's root directory in your terminal and run:
 
@@ -90,28 +108,28 @@ python main.py
 
 This will launch the application's graphical user interface.
 
-### Step 2: Capture Images
+### Step 3: Capture Images
 
 1. **Select a Camera**: Use the "Camera" dropdown menu to select your desired camera.
 2. **Capture Images**: Click the "Capture" button to take a picture. The captured image will appear in one of the three image slots on the right side of the window. You can capture up to three images.
 
-### Step 3: Select an Image for Evaluation
+### Step 4: Select an Image for Evaluation
 
 Click on one of the captured images to select it. The selected image will be highlighted with a blue border.
 
-### Step 4: Evaluate the Image
+### Step 5: Evaluate the Image
 
 1. **Choose an Image Classifier**: Use the "Image Classifier" dropdown menu to select the desired classification model (e.g., AlexNet, ResNet50).
 2. **Evaluate**: Click the "Evaluate Image" button. The system will classify the selected image and display the predicted class (e.g., Water, Wine, Coke) in the feedback label.
 
-### Step 5: Generate the Article
+### Step 6: Generate the Article
 
 1. **Choose a GPT Model**: Use the "GPT Model" dropdown menu to select the desired GPT model for article generation.
 2. **Choose a Diffusion Model**: Use the "Diffusion Model" dropdown menu to select the desired model for image generation.
 3. **Generate**: Click the "Generate Article" button. The system will generate an article based on the predicted class of the evaluated image, using the selected GPT model. It will also generate images related to the article's topic using the chosen Diffusion Model.
 4. **Feedback**: The feedback label will indicate that the article has been generated and passed to the assembler.
 
-### Step 6: Open the PDF
+### Step 7: Open the PDF
 
 Click the "Open PDF" button to open the generated article in your default PDF viewer. The article will be located at `output.pdf` in the project's root directory.
 
