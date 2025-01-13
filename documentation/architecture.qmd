@@ -86,11 +86,31 @@ Key libraries include:
 
 ### Article Agent
 
-\[Also describe the used tools (e.g. wikipedia) and the reason for that choice]
+#### Role in the Overall System
+
+The Article Agent is an automated system that generates the text and image descriptions based on the specific input data. The Article Agent has two main tasks:
+- **Text Creation:** For the Text generation, the agent is organized into four sections, each specifying a specific theme: Production, Historical Importance, Sensory Experience and Global Influence.
+- **Image Description:** Alongside the text, the Agent generates captions for the images, which will be used later in the Diffusion Model. The descriptions are tailored to the visual aspects of the bottle, such as shape, labeling, or color.
+
+#### Input/Output Data
+
+- **Input:** Predicted class label
+- **Output:** Text prompt and Image Descriptions (strings) that describe the class label
+
+#### Used Packages
+- **Langchain:** Integrating OpenAI Models and Tools, e.g. Wikipedia to gather relevant
+- **Wikipedia:** Used as a tool to gather information
+- **DuckDuckGoSearch:** Used as a tool to gather information
+
+#### Specific Decisions
+
+- **Wikipedia:** Wikipedia is the primary source for gathering structured and reliable information. Through LangChain, the Article Agent queries Wikipedia to extract relevant articles, definitions, and summaries.
+- **DuckDuckGoSearch:** DuckDuckGoSearch is an additional source for retrieving information from the web. As a search engine, it ensures a broad range of online sources and provides insights that might not be available on Wikipedia.
 
 ### Article Assembler
 
-\[Also describe potential article templates/structures you designed]
+#### Role in the Overall System
+The Article Assembler takes the content created by the Article Agent and turns it into a clear, well-structured article. By using a predefined template, it ensures all articles have a consistent and polished format.
 
 ### Diffusion Model
 
