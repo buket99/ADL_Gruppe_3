@@ -1,10 +1,11 @@
 # Agents
-langchain
-langchain-community
-python-dotenv
-wikipedia
-duckduckgo-search
-openai
+langchain==0.3.14
+langchain-community==0.3.14
+python-dotenv==1.0.1
+wikipedia==1.4.0
+duckduckgo-search==7.2.1
+openai==1.59.6
+
 # Assemblers
 
 # Classifiers

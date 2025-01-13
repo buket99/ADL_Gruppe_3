@@ -8,14 +8,40 @@ This chapter contains important evaluation results for the modules of the system
 
 [Describe how you get to ds2 based on the results on ds1]
 
-
 ## Article Agent 
 
 [Show some best- and worst-case examples and their timings]
 
 ## Diffusion Model 
 
-[Show some generation results and timings]
+The Diffusion Model was used to generate images based on text prompts derived from various aspects of "Water". These prompts were designed to capture different themes related to water, such as its composition, cultural significance, sensory experience, and global influence.
+
+Below are some examples of generated images along with their respective prompts:
+
+### Example 1: Composition, Origins, and Production
+
+**Prompt:** "The image depicts a mesmerizing aerial view of a vast expanse of crystal-clear water, symbolizing the essence of life on Earth. In the foreground, gentle ripples can be seen on the surface of the water, reflecting the sunlight and creating a shimmering effect. The water appears deep blue in color, with hints of turquoise near the shorelines, showcasing its purity and tranquility..."
+
+**Image:**
+![Generated image for the prompt on water composition](diffusion_model/output/output_small_from_text.png)
+
+### Example 2: Cultural, Historical, and Practical Importance
+
+**Prompt:** "In the foreground of the image, a serene and sacred river flows gently, reflecting the soft hues of the sky above. The water appears crystal clear, symbolizing purity and life, as it meanders gracefully through a lush landscape..."
+
+**Image:**
+![Generated image for the prompt on water's cultural significance](diffusion_model/output/image_2_for_Water_stable-diffusion-v1-5\ \(mid\).png)
+
+### Example 3: Sensory Experience and Effects
+**Prompt:** "In the foreground of the image, a serene lake glistens under the gentle sunlight, creating a mesmerizing play of light and shadow on the water's surface..."
+
+**Generation time**: The average time to generate an image is around 1 minute and 23 seconds. This varies slightly depending on the complexity of the prompt.
+
+### Model Used
+
+The `runwayml/stable-diffusion-v1-5` model was used for image generation, operating on an Apple M1 device utilizing the `mps` backend.
+
+These examples demonstrate the capability of the Diffusion Model to interpret textual descriptions and generate corresponding visual representations. The model successfully captures the essence of the prompts, producing images that reflect the described scenes with reasonable detail and coherence.
 
 ## Article Assembler 
 

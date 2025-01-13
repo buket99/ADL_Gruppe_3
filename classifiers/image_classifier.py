@@ -1,3 +1,4 @@
+#image_classifier.py
 import os
 import kagglehub
 import torch
@@ -408,6 +409,12 @@ class_names = [
     "Wine",
 ]
 
+BASE_DIR = (
+    Path(__file__).resolve().parent.parent
+)
+
+MODEL_DIR = BASE_DIR / "classifiers" / "model"
+
 
 def load_model(model_type, model_path):
     """
@@ -431,15 +438,18 @@ def load_model(model_type, model_path):
             "Unsupported model type. Choose from 'alexnet', 'resnet50', or 'vit'."
         )
 
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
     model.eval()
     return model
 
 
-def classify_image(image_path, model_type="alexnet", model_path="model.pth"):
+def classify_image(image_path, model_type="alexnet", model_path=None):
     """
     Classify a single image using the specified model.
     """
+    if model_path is None:
+        model_path = get_default_model_path(model_type)
+
     # Load the specified model
     model = load_model(model_type, model_path)
 
@@ -466,19 +476,39 @@ def classify_image(image_path, model_type="alexnet", model_path="model.pth"):
     return predicted_class
 
 
-def classify_images_in_directory(
-    directory_path, model_type="alexnet", model_path="model.pth"
-):
+def get_available_models():
     """
-    Classify all images in a directory using the specified model.
+    Returns a dictionary of available models, where keys are model types and values are lists of model paths.
     """
-    for filename in os.listdir(directory_path):
-        if filename.lower().endswith(
-            (".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff", ".webp")
-        ):
-            image_path = os.path.join(directory_path, filename)
-            prediction = classify_image(image_path, model_type, model_path)
-            print(f"Image: {filename}, Prediction: {prediction}")
+    available_models = {
+        "alexnet": [],
+        "resnet50": [],
+        "vit": [],
+    }
+    for filename in os.listdir(MODEL_DIR):
+        if filename.endswith(".pth"):
+            model_type = None
+            if "alexnet" in filename:
+                model_type = "alexnet"
+            elif "resnet50" in filename:
+                model_type = "resnet50"
+            elif "vit" in filename:
+                model_type = "vit"
+
+            if model_type:
+                available_models[model_type].append(str(MODEL_DIR / filename))
+    return available_models
+
+
+def get_default_model_path(model_type):
+    """
+    Returns the default model path for a given model type.
+    """
+    models = get_available_models()
+    if model_type in models and models[model_type]:
+        return models[model_type][0]  # Return the first available model of that type
+    else:
+        raise ValueError(f"No models found for type: {model_type}")
 
 
 def preprocess_image(image_path):
@@ -569,37 +599,3 @@ def classify_and_visualize_with_saliency(
 
     # Generate the saliency map
     generate_saliency_map(model, image_path, class_names)
-
-
-if __name__ == "__main__":
-    # Specify the directory containing the test images
-    # test_images_directory = os.path.join(os.getcwd(), "classifiers/testImages")
-    # classify_images_in_directory(test_images_directory)
-
-    # model_path = "bottle_fine_tuned_alexnet.pth"
-    # image_path = "classifiers/testImages/KartonMilch2.jpg"
-
-    # classify_and_visualize_with_saliency(model_path, image_path, class_names)
-    # train_model("alexnet")
-
-    # Specify the directory containing the test images
-    test_image_name = "input_20250111_184715.jpg"
-    BASE_DIR = (
-        Path(__file__).resolve().parent
-    )  # path to the folder of image_classifier.py
-    test_images_directory = BASE_DIR.parent / "classifiers" / "input"
-
-    model_path = os.path.join(
-        os.path.dirname(__file__), "model/bottle_fine_tuned_alexnet.pth"
-    )
-
-    # Classify and visualize saliency for each image in the directory
-    for filename in os.listdir(test_images_directory):
-        if filename.lower().endswith(
-            (".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff", ".webp")
-        ):
-            image_path = os.path.join(test_images_directory, filename)
-            print(f"Processing image: {filename}")
-            classify_and_visualize_with_saliency(
-                model_path, image_path, model_type="alexnet", class_names=class_names
-            )

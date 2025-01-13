@@ -1,63 +1,138 @@
 # Architecture
 
-This chapter describes the architecture of the system.
+This chapter describes the architecture of the system, designed to capture images, classify them, generate articles, and synthesize images related to the classified objects.
 
 ## Overview
 
-[Give an overview of the architecture]
+The system is structured as a pipeline with several interconnected modules:
 
-## Modules 
+1. **Webcam**: Captures images in real time.
+2. **Object Detector (Image Classifier)**: Processes captured images to detect and classify objects, specifically different types of bottles.
+3. **Article Agent**: Generates an article based on the classification result, using various tools like Wikipedia to enrich the content.
+4. **Article Assembler**: Combines the generated article with synthesized images into a final document.
+5. **Diffusion Model**: Creates images related to the article's topic based on textual prompts.
+
+The application can be deployed using a Docker container to ensure a consistent environment across different systems, as indicated by the project's `Dockerfile`.
+
+## Modules
 
 This section describes the individual modules of the system.
 
-### Webcam 
+### Webcam
 
-### Object Detector 
+The Webcam module serves as the initial point of interaction, allowing real-time image capture.
 
 #### Role in the Overall System
+
+It provides a live stream of images, which can be captured by the user. These captured images are then passed to the Object Detector for classification.
+
+#### Input/Output Data
+
+-   **Input**: Live video stream from a selected camera.
+-   **Output**: Captured images in PNG format, saved in the `captured_images` directory.
+
+#### Data Flow
+
+1. **Camera Selection**: Users can choose from available cameras using a dropdown menu.
+2. **Live Feed**: Displays the live camera feed in the application window.
+3. **Image Capture**: Users can capture the current frame, which is then cropped to a square, converted to RGB format, and saved.
+4. **Feedback**: Provides feedback to the user about the status of the camera and the captured images.
+
+#### Used Packages
+
+-   **OpenCV (cv2)**: For camera access and image processing.
+-   **PyQt5**: For creating the graphical user interface.
+-   **platform**: To determine the operating system and select the appropriate camera capture method.
+
+#### Specific Design Decisions
+
+-   **Platform-Specific Camera Handling**: Uses `cv2.CAP_AVFOUNDATION` for macOS and `cv2.CAP_DSHOW` for Windows to ensure compatibility.
+-   **Error Handling**: Checks if the camera is available and provides feedback if not.
+-   **Image Cropping**: Crops captured images to a square to maintain a consistent aspect ratio for the subsequent image classification step.
+
+### Object Detector
+
+#### Role in the Overall System
+
 The image classification module plays a critical role in identifying bottle types within the system. It provides accurate predictions for classifying bottles into predefined categories, serving as the foundation for subsequent tasks like essay generation and image synthesis.
 
 #### Input/Output Data
-- **Input:** Preprocessed images (224x224 resolution) from either the synthetic dataset or custom-scraped images.
-- **Output:** Predicted class labels, indicating the bottle type (e.g., Water, Wine, Coke).
+
+-   **Input:** Preprocessed images (224x224 resolution) from either the synthetic dataset or custom-scraped images.
+-   **Output:** Predicted class labels, indicating the bottle type (e.g., Water, Wine, Coke).
 
 #### Data Flow
+
 1. **Data Ingestion:** Images are loaded using the PyTorch `ImageFolder` class and split into training, validation, and testing datasets.
 2. **Preprocessing:** Images undergo resizing, normalization (using ImageNet statistics), and conversion to tensors.
 3. **Model Training:** Fine-tuned models (AlexNet, ResNet50, or Vision Transformer) are trained using PyTorch Lightning, optimizing for classification accuracy.
 4. **Prediction:** The trained model predicts the class label for unseen images. Optionally, saliency maps visualize model focus areas during classification.
 
 #### Used Packages
+
 Key libraries include:
-- **PyTorch/Torchvision:** Model definition, data loading, and transformations.
-- **PyTorch Lightning:** Simplified training and evaluation workflows.
-- **Scikit-learn:** Evaluation metrics (e.g., confusion matrix).
-- **Selenium/Requests:** Dataset additions through web scraping Google.
+
+-   **PyTorch/Torchvision:** Model definition, data loading, and transformations.
+-   **PyTorch Lightning:** Simplified training and evaluation workflows.
+-   **Scikit-learn:** Evaluation metrics (e.g., confusion matrix).
+-   **Selenium/Requests:** Dataset additions through web scraping Google.
 
 #### Specific Design Decisions
-- **Pretrained Models:** AlexNet, ResNet50, and Vision Transformer were chosen for their performance trade-offs between accuracy and computational cost.
-- **Custom Dataset Augmentation:** To expand class diversity, a web scraper was developed to retrieve images from Google Images.
-- **Evaluation:** A combination of accuracy metrics, confusion matrices, and saliency maps ensures a robust evaluation of model performance.
-- **Efficiency Considerations:** AlexNet was primarily used for development due to limited hardware, while more complex models (e.g., Vision Transformers) were tested on university lab GPUs.
 
-::: {.callout-tip}
-You can reference literature from bibtex files (references.bib). Example: Use @knuth84 for additional discussion of literate programming.
-:::
+-   **Pretrained Models:** AlexNet, ResNet50, and Vision Transformer were chosen for their performance trade-offs between accuracy and computational cost.
+-   **Custom Dataset Augmentation:** To expand class diversity, a web scraper was developed to retrieve images from Google Images.
+-   **Evaluation:** A combination of accuracy metrics, confusion matrices, and saliency maps ensures a robust evaluation of model performance.
+-   **Efficiency Considerations:** AlexNet was primarily used for development due to limited hardware, while more complex models (e.g., Vision Transformers) were tested on university lab GPUs.
 
-### Article Agent 
+### Article Agent
 
-[Also describe the used tools (e.g. wikipedia) and the reason for that choice]
+\[Also describe the used tools (e.g. wikipedia) and the reason for that choice]
 
-### Article Assembler 
+### Article Assembler
 
-[Also describe potential article templates/structures you designed]
+\[Also describe potential article templates/structures you designed]
 
-### Diffusion Model 
+### Diffusion Model
 
-[Also describe the used diffusion model]
+The Diffusion Model is responsible for generating images based on textual prompts derived from the article content.
 
+#### Role in the Overall System
 
+It takes prompts generated by the Article Agent and synthesizes images that visually represent the described concepts, enhancing the final article with relevant visuals.
 
+#### Input/Output Data
+
+-   **Input**: Text prompts (strings) that describe the desired image.
+-   **Output**: Generated images in PNG format, saved in the `diffusion_model/output` directory.
+
+#### Data Flow
+
+1. **Model Loading**: Loads a pre-trained Stable Diffusion model.
+2. **Prompt Processing**: Receives text prompts from the Article Agent.
+3. **Image Generation**: Uses the loaded model to generate an image based on the prompt. The process involves multiple steps (e.g., 50 steps) to refine the image.
+4. **Image Saving**: Saves the generated image to the `diffusion_model/output` directory with a descriptive filename.
+
+#### Used Packages
+
+-   **diffusers**: Provides the `StableDiffusionPipeline` for loading and using diffusion models.
+-   **torch**: For tensor operations and device management (using MPS, CUDA, or CPU based on availability).
+-   **pathlib**: For handling file paths in a platform-independent way.
+
+#### Specific Design Decisions
+
+-   **Model Selection**: Supports multiple diffusion models (e.g., `stable-diffusion-2-1-base`, `stable-diffusion-v1-5`, `ldm-text2im-large-256`), allowing users to choose based on speed and quality requirements.
+-   **Device Agnostic**: Automatically detects and uses the best available device (MPS, CUDA, or CPU) for image generation.
+-   **Error Handling**: Validates the model key and provides informative error messages if an invalid key is used.
+-   **Descriptive Naming**: Generated images are saved with filenames that include the model key and a sequence number for easy identification.
+
+#### Example Usage
+
+```python
+# Example usage in main.py
+image_path = generate_image(
+    selected_diffusion_model, prompt, f"image_{index}_for_{predicted_class}"
+)
+```
 
 ::: {.callout-tip}
 You can also work with equations. Example:

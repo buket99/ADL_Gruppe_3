@@ -11,17 +11,34 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QPushButton,
     QComboBox,
-    QFrame,
 )
-from PyQt5.QtCore import QTimer, Qt, QSize
-from PyQt5.QtGui import QPixmap, QImage, QColor
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPixmap, QImage
+from classifiers.image_classifier import classify_image, get_available_models
+from diffusion_model.diffusion_model import (
+    generate_image,
+    get_available_diffusion_models,
+)
+from agents.article_agent import ArticleAgent
+from assemblers.article_assembler import ArticleAssembler
+import os
 
 
 class CameraApp(QMainWindow):
+    """
+    Main application window for capturing and processing images.
+    """
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Camera Capture")
         self.setGeometry(100, 100, 1200, 700)
+
+        # Define paths using pathlib
+        self.base_dir = Path(__file__).resolve().parent
+        self.resources_dir = self.base_dir / "resources"
+        self.save_directory = self.base_dir / "captured_images"
+        self.save_directory.mkdir(parents=True, exist_ok=True)
 
         # Main widget
         self.main_widget = QWidget()
@@ -86,7 +103,8 @@ class CameraApp(QMainWindow):
 
         # -- HM Logo --
         self.logo_label = QLabel()
-        pixmap = QPixmap("resources/Hochschule_Muenchen_Logo.svg").scaled(
+        logo_path = self.resources_dir / "Hochschule_Muenchen_Logo.svg"
+        pixmap = QPixmap(str(logo_path)).scaled(
             200, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation
         )
         self.logo_label.setPixmap(pixmap)
@@ -97,7 +115,8 @@ class CameraApp(QMainWindow):
         # GPT Model
         self.gpt_label = QLabel("GPT Model:")
         self.gpt_selector = QComboBox()
-        self.gpt_selector.addItems(["GPT-3.5", "GPT-4"])  # Replace with actual models
+        self.article_agent = ArticleAgent()
+        self.gpt_selector.addItems(self.article_agent.get_available_models())
         self.model_selection_layout.addWidget(self.gpt_label)
         self.model_selection_layout.addWidget(self.gpt_selector)
 
@@ -105,29 +124,26 @@ class CameraApp(QMainWindow):
         self.diffusion_label = QLabel("Diffusion Model:")
         self.diffusion_selector = QComboBox()
         self.diffusion_selector.addItems(
-            ["Model A", "Model B"]
-        )  # Replace with actual models
+            get_available_diffusion_models().keys()
+        )  # Populate with available models
         self.model_selection_layout.addWidget(self.diffusion_label)
         self.model_selection_layout.addWidget(self.diffusion_selector)
 
         # Image Classifier
         self.classifier_label = QLabel("Image Classifier:")
         self.classifier_selector = QComboBox()
-        self.classifier_selector.addItems(
-            [
-                "bottle_fine_tuned_alexnet.pth",
-                "bottle_fine_tuned_resnet50.pth",
-                "bottle_fine_tuned_vit.pth",
-            ]
-        )
+        self.update_classifier_models()
         self.model_selection_layout.addWidget(self.classifier_label)
         self.model_selection_layout.addWidget(self.classifier_selector)
 
         # -- Buttons --
         self.buttons_layout = QVBoxLayout()
         self.evaluate_button = QPushButton("Evaluate Image")
+        self.evaluate_button.clicked.connect(self.evaluate_selected_image)
         self.generate_article_button = QPushButton("Generate Article")
+        self.generate_article_button.clicked.connect(self.generate_article)
         self.open_pdf_button = QPushButton("Open PDF")
+        self.open_pdf_button.clicked.connect(self.open_pdf)
         self.buttons_layout.addWidget(self.evaluate_button)
         self.buttons_layout.addWidget(self.generate_article_button)
         self.buttons_layout.addWidget(self.open_pdf_button)
@@ -148,10 +164,6 @@ class CameraApp(QMainWindow):
         self.cap = None
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_frame)
-
-        # -- Initialize Save Directory --
-        self.save_directory = Path("captured_images")
-        self.save_directory.mkdir(parents=True, exist_ok=True)
 
         # Start camera
         self.change_camera()
@@ -331,6 +343,109 @@ class CameraApp(QMainWindow):
             self.cap.release()
         self.timer.stop()
         event.accept()
+
+    def update_classifier_models(self):
+        available_classifier_models = get_available_models()
+        self.classifier_selector.clear()
+
+        # Create a dictionary to store model paths
+        self.model_paths = {}
+
+        for model_type, model_paths in available_classifier_models.items():
+            for model_path in model_paths:
+                # Populate the dictionary with model type as key and path as value
+                self.model_paths[model_type] = model_path
+                # Add only model type to the dropdown
+                self.classifier_selector.addItem(model_type)
+
+    def evaluate_selected_image(self):
+        if self.selected_image_index >= 0:
+            image_path = (
+                self.save_directory / f"captured_{self.selected_image_index + 1}.png"
+            )
+
+            # Get selected model type from dropdown
+            selected_model_type = self.classifier_selector.currentText()
+
+            # Get the path from the dictionary using the selected model type
+            path_to_model = self.model_paths.get(selected_model_type)
+
+            if image_path.exists() and path_to_model:
+                try:
+                    # Classify the image using the selected model type and path
+                    self.predicted_class = classify_image(
+                        str(image_path), selected_model_type, path_to_model
+                    )
+
+                    self.feedback_label.setStyleSheet("color: green;")
+                    self.feedback_label.setText(
+                        f"Image classified as: {self.predicted_class}"
+                    )
+
+                except Exception as e:
+                    self.feedback_label.setStyleSheet("color: red;")
+                    self.feedback_label.setText(f"Error during classification: {e}")
+            elif not path_to_model:
+                self.feedback_label.setStyleSheet("color: red;")
+                self.feedback_label.setText(
+                    "Model path not found for the selected model type."
+                )
+            else:
+                self.feedback_label.setStyleSheet("color: red;")
+                self.feedback_label.setText("Image file not found.")
+        else:
+            self.feedback_label.setStyleSheet("color: red;")
+            self.feedback_label.setText("No image selected for evaluation.")
+
+    def generate_article(self):
+        """
+        Generates the article using the ArticleAgent and passes data to the ArticleAssembler.
+        """
+        if hasattr(self, "predicted_class"):
+            selected_gpt_model = self.gpt_selector.currentText()
+            selected_diffusion_model = self.diffusion_selector.currentText()
+
+            # Initialize ArticleAgent with the selected model
+            self.article_agent = ArticleAgent(model=selected_gpt_model)
+
+            # Generate article content and image paths
+            paragraphs, image_paths = self.article_agent.generate_article_content(
+                self.predicted_class, selected_diffusion_model
+            )
+
+            # Pass data to ArticleAssembler
+            assembler = ArticleAssembler()
+            assembler.assemble_article(self.predicted_class, paragraphs, image_paths)
+
+            self.feedback_label.setStyleSheet("color: green;")
+            self.feedback_label.setText("Article generated and passed to assembler.")
+        else:
+            self.feedback_label.setStyleSheet("color: red;")
+            self.feedback_label.setText("No image classification available.")
+
+    def open_pdf(self):
+        """
+        Opens the generated PDF using the default PDF viewer.
+        """
+        pdf_path = self.base_dir / "output.pdf"
+        if pdf_path.exists():
+            try:
+                if platform.system() == "Windows":
+                    os.startfile(pdf_path)
+                elif platform.system() == "Darwin":  # macOS
+                    os.system(f"open '{pdf_path}'")
+                else:  # Linux
+                    os.system(f"xdg-open '{pdf_path}'")
+                self.feedback_label.setStyleSheet("color: green;")
+                self.feedback_label.setText("PDF opened successfully.")
+            except Exception as e:
+                self.feedback_label.setStyleSheet("color: red;")
+                self.feedback_label.setText(f"Error opening PDF: {e}")
+        else:
+            self.feedback_label.setStyleSheet("color: red;")
+            self.feedback_label.setText(
+                "PDF file not found. Generate the article first."
+            )
 
 
 def main():
