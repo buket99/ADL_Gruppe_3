@@ -2,7 +2,8 @@
 [describe the chosen article domain, e.g. ikea-like user manuals or cook books, ...]
 
 ## Article Structure  
-[How is the generated article structured?]
+Each Article follows the same structure. 
+They start with the basic metadata (title, author, generated date). After that the main body is broken down into four paragraphs, each accompanied by an image.
 
 ## Data Set 
 The dataset used in our project evolved through multiple iterations, reflecting a combination of external resources, expert feedback, and self-constructed solutions. Initially, following our instructor’s recommendation, we explored common platforms like Kaggle and Roboflow Universe. We identified bottles as a suitable focus due to their everyday availability and chose the "Bottle Synthetic Images Dataset" from Kaggle for our first version. This dataset, augmented synthetically, comprised five classes—beer, plastic, soda, water, and wine bottles—with 5,000 images per class, totaling 25,000 images. Using AlexNet, we achieved an impressive average accuracy of 99% on the test set. However, based on our instructor’s advice, this dataset was deemed overly large for five classes, prompting us to increase the number of categories.
