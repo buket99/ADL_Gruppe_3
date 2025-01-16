@@ -8,4 +8,4 @@ lightning_logs/version_4/metrics.csv
 /lightning_logs
 
 # Agents config file/OpenAI Key
-# agents/.env
+agents/.env
