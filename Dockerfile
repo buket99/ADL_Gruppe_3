@@ -1,27 +1,38 @@
-# Use a base image with Python 3.12
-FROM python:3.12
+FROM python:3.10
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Install system dependencies, including Pandoc and GUI dependencies
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     pandoc \
+    qtbase5-dev \
+    qttools5-dev-tools \
+    qt5-qmake \
     libgl1-mesa-glx \
     libglib2.0-0 \
     libsm6 \
     libxrender1 \
     libxext6 \
-    && rm -rf /var/lib/apt/lists/*
+    qtchooser \
+    build-essential \
+    libgl1-mesa-dev
 
-# Copy the project files into the container
+# Upgrade pip, setuptools, and wheel
+RUN pip install --upgrade pip setuptools wheel
+
+# Install PyQt6 (without strict version constraint)
+RUN pip install "PyQt6>=6.7" --only-binary :all:
+
+# Debug Qt and qmake
+RUN which qmake && qmake --version
+
+# Copy project files
 COPY . /app
 
-# Install Python dependencies
+# Install remaining Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose a port if necessary (e.g., for a web interface)
-# EXPOSE 8080
-
-# Set the default command to run the main application
+# Set the default command
 CMD ["python", "main.py"]

@@ -35,5 +35,4 @@ sentencepiece
 
 #main
 opencv-python
-PyQt5
-
+PyQt6
