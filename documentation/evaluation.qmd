@@ -3,10 +3,28 @@
 This chapter contains important evaluation results for the modules of the system.
 
 ## Image Classifier
+This section outlines one good example with saliency maps and one bad example with saliency maps. It also includes a confusion matrix to show the model's performance across all classes.
 
-[Show evaluation results as described in the team-project slides]
+### Best Case Example
+![Best Case Example](images/evaluation/Best_Case.png)
 
-[Describe how you get to ds2 based on the results on ds1]
+In this example, the model confidently identifies a milk carton. Saliency maps show strong activation around the cow image on the carton, which is a distinctive feature for classifying milk (at least in drinks). However, an interesting observation is the activation around the refrigerator in the background. This may be because many training images for milk cartons likely included refrigerators, leading the model to associate them as a secondary feature.
+
+### Confusion Matrix
+![Confusion Matrix](images/evaluation/matrix.png)
+
+The confusion matrix illustrates the model's classification performance across all 11 classes. The diagonal entries represent correctly classified examples, while off-diagonal entries indicate misclassifications. Notably, the model performs exceptionally well for classes like "Coke" and "Water," with very few misclassifications.
+
+### Worst Case Example
+![Worst Case Example](images/evaluation/Worst_Case_5.png)
+
+In this example, the model struggles to classify a glass bottle of liquor, a type of data it has not encountered before. The saliency map highlights scattered areas of attention, suggesting uncertainty in where to focus. This highlights a limitation in the model's ability to "generalize" (though there still is no class liquor) to unseen data or domains not represented in the training set.
+
+### Dataset Evolution
+As described in the **Domain** > **Data Set** section, the transition from the initial dataset (ds1) to the expanded dataset (ds2) played a crucial role in improving the model's robustness. This evolution was supported by our custom web scraper and additional images captured manually, providing diverse and realistic examples for training.
+
+These evaluations underscore the importance of comprehensive data preparation and illustrate the model's performance under both ideal and challenging scenarios.
+
 
 
 ## Article Agent 

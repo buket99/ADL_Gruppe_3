@@ -15,17 +15,17 @@ This refinement resulted in our third and final dataset, achieving an AlexNet ac
 
 The dataset contains the following number of elements for each class:
 
-- **Water:** 165 elements
-- **Wine:** 157 elements
-- **Tea:** 129 elements
-- **Orange Soda:** 122 elements
-- **Orange Juice:** 119 elements
-- **Milk:** 149 elements
-- **Energy Drink:** 131 elements
-- **Drinking Bottle:** 155 elements
-- **Coke:** 284 elements
-- **Coffee:** 127 elements
-- **Beer:** 153 elements
+- **Water:** 234 elements
+- **Wine:** 221 elements
+- **Tea:** 190 elements
+- **Orange Soda:** 201 elements
+- **Orange Juice:** 218 elements
+- **Milk:** 206 elements
+- **Energy Drink:** 205 elements
+- **Drinking Bottle:** 267 elements
+- **Coke:** 370 elements
+- **Coffee:** 197 elements
+- **Beer:** 244 elements
 
 Below are three example images from our dataset:
 
@@ -38,9 +38,3 @@ Below are three example images from our dataset:
 ### Milk
 ![Milk](images/example-images/milk.jpg)
 
-::: {.callout-tip}
-You can use figures and reference them in the text (but only outside of tip-sections :D): 
-:::
-![Elephants.](images/elephants.png){#fig-elephants}
-
-This is how references are used: @fig-elephants
