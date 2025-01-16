@@ -10,7 +10,8 @@ This chapter contains important evaluation results for the modules of the system
 
 ## Article Agent
 
-\[Show some best- and worst-case examples and their timings]
+The Article Agent was evaluated based on the word count of 1000 words in the produced article. However, the initial output consistently fell short, averaging 500 to 600 words using GPT-3.5 turbo or GPT-4. Also, various parameters, like the max_tokens or temperature, were changed to reach the word count, but none of the changes made a significant difference.
+To solve this, a condition to check if the word count was reached was added. If the total word count of all paragraphs is under 1000 words, an extra paragraph will be added. By adding this, the issue of not reaching enough words was solved.
 
 ## Diffusion Model
 
