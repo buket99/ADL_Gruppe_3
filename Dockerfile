@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     qtchooser \
     build-essential \
-    libgl1-mesa-dev
+    libgl1-mesa-dev \
+    wget
 
 # Upgrade pip, setuptools, and wheel
 RUN pip install --upgrade pip setuptools wheel
@@ -27,6 +28,17 @@ RUN pip install "PyQt6>=6.7" --only-binary :all:
 
 # Debug Qt and qmake
 RUN which qmake && qmake --version
+
+# Create the model directory
+RUN mkdir -p /app/classifiers/model
+
+# Download the model from LRZ
+RUN wget --no-verbose --output-document=/app/classifiers/model/model.tar.gz \
+    "https://syncandshare.lrz.de/getlink/fiRQrzQkL94w4DWzgSNPX/model"
+
+# Extract the model (assuming it is a tar.gz file)
+RUN tar -xzf /app/classifiers/model/model.tar.gz -C /app/classifiers/model && \
+    rm /app/classifiers/model/model.tar.gz
 
 # Copy project files
 COPY . /app
