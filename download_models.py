@@ -50,8 +50,8 @@ def download_and_test_model(url, download_path, extract_path):
 if __name__ == "__main__":
     # Define the URL, download path, and extraction path
     url = "https://syncandshare.lrz.de/dl/fiRQrzQkL94w4DWzgSNPX/model.dir"
-    download_path = "/app/classifiers/model/model.zip"
-    extract_path = "/app/classifiers/model"
+    download_path = "classifiers/model/model.zip"
+    extract_path = "classifiers/model"
 
     # Call the download and test function
     download_and_test_model(url, download_path, extract_path)

@@ -420,6 +420,7 @@ def load_model(model_type, model_path):
     """
     Load the specified model (AlexNet, ResNet50, or Vision Transformer) with custom weights.
     """
+
     if model_type == "alexnet":
         model = torch.hub.load("pytorch/vision:v0.10.0", "alexnet", pretrained=False)
         model.classifier[6] = torch.nn.Linear(
@@ -429,7 +430,7 @@ def load_model(model_type, model_path):
         model = torch.hub.load("pytorch/vision:v0.10.0", "resnet50", pretrained=False)
         model.fc = torch.nn.Linear(model.fc.in_features, len(class_names))
     elif model_type == "vit":
-        model = torch.hub.load("pytorch/vision:v0.10.0", "vit_b_16", pretrained=False)
+        model = models.vit_b_16(pretrained=False)
         model.heads.head = torch.nn.Linear(
             model.heads.head.in_features, len(class_names)
         )
@@ -437,6 +438,7 @@ def load_model(model_type, model_path):
         raise ValueError(
             "Unsupported model type. Choose from 'alexnet', 'resnet50', or 'vit'."
         )
+    
 
     model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
     model.eval()
