@@ -5,15 +5,15 @@ This chapter contains a description of the steps necessary to install and use th
 
 ## Installation
 
-This section outlines the steps required to install the system, starting with cloning the Git repository and setting up the environment using Docker.
+This section outlines the steps required to install the system, starting with cloning the Git repository and setting up the environment.
 
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
 
 -   Git
--   Docker
--   An X server (XQuartz on macOS, WSL2 with VcXsrv or X410 on Windows)
+-   Python 3.8+ (with pip)
+-   An X server (XQuartz on macOS, WSL2 with VcXsrv or X410 on Windows) if you plan to use the GUI.
 -   OpenAI API Key
 
 ### Step 1: Clone the Git Repository
@@ -51,9 +51,25 @@ python download_models.py
 Without a valid OpenAI API key in the `agents/.env` file, the article generation functionality will not work.
 :::
 
-### Step 4: Build the Docker Image
+### Step 4: Install Dependencies
 
-The project uses a Docker container to ensure a consistent environment. Build the Docker image by running the following command in the project's root directory:
+This project can be run directly without Docker. Install the required Python packages using pip:
+
+```bash
+pip install -r requirements.txt
+```
+
+::: {.callout-note}
+It's recommended to create a virtual environment before installing the dependencies to avoid conflicts with other projects.
+:::
+
+### Step 5: (Optional) Docker Setup
+
+If you prefer to use Docker, follow these steps:
+
+#### Build the Docker Image
+
+The project can optionally use a Docker container to ensure a consistent environment. Build the Docker image by running the following command in the project's root directory:
 
 ```bash
 docker build -t adl-gruppe-3 .
@@ -61,7 +77,7 @@ docker build -t adl-gruppe-3 .
 
 This command will create a Docker image named `adl-gruppe-3` based on the provided `Dockerfile`. The Dockerfile includes all necessary dependencies, including Pandoc for document conversion.
 
-### Step 5: Run the Docker Container
+#### Run the Docker Container (MacOS)
 
 After building the image, run the Docker container with the following command:
 
@@ -79,7 +95,15 @@ This command does the following:
 -   `-v $(pwd):/app`: Mounts the project directory into the container.
 
 ::: {.callout-note}
-This setup assumes you have a webcam available at `/dev/video0`. If your webcam is at a different path, adjust the command accordingly. Also, for the GUI to work, you need an X server running on your host. On Linux, this is usually the case. On macOS, you might need to install [XQuartz](https://www.xquartz.org/). On Windows, you may need to use [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) with an X server like [VcXsrv](https://sourceforge.net/projects/vcxsrv/) or [X410](https://x410.dev/).
+This setup assumes you have a webcam available at `/dev/video0`. If your webcam is at a different path, adjust the command accordingly. For the GUI to work, you need an X server running on your host. On macOS, you might need to install [XQuartz](https://www.xquartz.org/).
+:::
+
+#### Run the Docker Container (Windows)
+
+Running the Docker container with webcam access on Windows is more complex due to the lack of direct `/dev/video` support. You'll likely need to use a workaround like a USB/IP solution or explore other methods for accessing the webcam from within the container.
+
+::: {.callout-warning}
+The provided Docker setup is primarily tested on macOS. On Windows, you may encounter issues with webcam access and GUI forwarding. Consider running the application directly without Docker on Windows.
 :::
 
 ## Usage
@@ -127,7 +151,7 @@ The generated PDF will be overwritten each time you generate a new article. If y
 
 ## Troubleshooting
 
--   **Camera not found**: Ensure your webcam is properly connected and recognized by your operating system. If you're using Docker, make sure you've correctly passed the device to the container (e.g., `--device=/dev/video0:/dev/video0`).
--   **GUI not displaying**: If you're using Docker, ensure you've set up X11 forwarding correctly (e.g., `-v /tmp/.X11-unix:/tmp/.X11-unix:rw -e DISPLAY=$DISPLAY`). On macOS, install XQuartz. On Windows, use WSL2 with an X server like VcXsrv or X410.
+-   **Camera not found**: Ensure your webcam is properly connected and recognized by your operating system. If you're using Docker on macOS, make sure you've correctly passed the device to the container (e.g., `--device=/dev/video0:/dev/video0`). On Windows running directly without Docker should find the cameras.
+-   **GUI not displaying**: If you're using Docker, ensure you've set up X11 forwarding correctly (e.g., `-v /tmp/.X11-unix:/tmp/.X11-unix:rw -e DISPLAY=$DISPLAY`). On macOS, install XQuartz. On Windows, use WSL2 with an X server like VcXsrv or X410. If you are running directly on windows, make sure you have an X server installed like VcXsrv or X410.
 -   **Article generation fails**: Verify that you've set your OpenAI API key correctly in the `agents/.env` file.
 -   **Model not found**: If you encounter errors related to missing models, double-check that you've downloaded the models using `download_models.py` and that they are in the correct directory (`classifiers/model`).
