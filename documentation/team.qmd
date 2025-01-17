@@ -23,7 +23,7 @@ Table @tbl-wps outlines all work packages defined for this project, along with t
 +-------------+------------------------------------------------+-------------------------------------+
 | WP8         | Image Data Collection for Classifier Training  | Buket Kurtulus, Moritz Kick         |
 +-------------+------------------------------------------------+-------------------------------------+
-| WP9         | Web Scraping for Image Data (Attempted)        | Nico Bayer                          |
+| WP9         | Web Scraping for Image Data        | Nico Bayer                          |
 +-------------+------------------------------------------------+-------------------------------------+
 
 : Work packages. {#tbl-wps}
@@ -34,7 +34,7 @@ The project was developed iteratively, with continuous collaboration and integra
 
 -   **KW 42-46:**
     -   Initial project setup and environment configuration.
-    -   Nico Bayer began development of the Image Classifier (WP1), including initial evaluation and attempted web scraping for image data (WP9).
+    -   Nico Bayer began development of the Image Classifier (WP1), including initial evaluation and did web scraping for image data (WP9).
     -   Buket Kurtulus started working on the Article Agent and Assembler (WP2).
     -   Moritz Kick researched and integrated the Diffusion Model (WP3).
     -   Buket Kurtulus and Moritz Kick collected images to support classifier training (WP8).
@@ -59,7 +59,7 @@ The project was developed iteratively, with continuous collaboration and integra
 -   **Nico Bayer:**
     -   Developed the initial version of the Image Classifier (WP1).
     -   Performed evaluation of the Image Classifier.
-    -   Attempted web scraping for additional bottle images, although with limited success (WP9).
+    -   Did web scraping for additional bottle images (WP9).
     -   Contributed to the documentation (WP6).
 
 -   **Buket Kurtulus:**
