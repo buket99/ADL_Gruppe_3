@@ -84,4 +84,4 @@ Both models were tested on an Apple M1 device utilizing the `mps` backend.
 
 ## Article Assembler
 
-\[Show some generation examples and timings that show how long the entire generation process takes]
+The Article Assembler generates the article content - using the Article Agent - into a markdown template to produce a PDF document. Excluding the images, generated through the diffusion model, the process takes approximately 30 seconds.
