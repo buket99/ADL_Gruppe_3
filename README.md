@@ -11,7 +11,7 @@ This project is an application developed by Group 3 for the Advanced Deep Learni
     -   Developed the `assemble_article` function to combine the article text and image descriptions into a final PDF using a Markdown template and Pandoc.
 -   **Moritz:** Article Assembler, Diffusion Model, and Main Application
     -   Integrated the `diffusion_model` function to generate images based on textual prompts.
-    -   Built the main application (`main.py`) with a GUI using PyQt6, integrating all modules.
+    -   Built the main application (`main.py`) with a GUI using PyQt5, integrating all modules.
 
 ## Modules
 

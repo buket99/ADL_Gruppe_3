@@ -1,50 +1,42 @@
-FROM python:3.10
+FROM python:3.10-slim
 
 WORKDIR /app
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     pandoc \
-    qtbase5-dev \
-    qttools5-dev-tools \
-    qt5-qmake \
     libgl1-mesa-glx \
     libglib2.0-0 \
     libsm6 \
     libxrender1 \
     libxext6 \
-    qtchooser \
     build-essential \
     libgl1-mesa-dev \
-    wget
+    unzip \
+    libx11-xcb1 \
+    libxcb-cursor0 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip, setuptools, and wheel
-RUN pip install --upgrade pip setuptools wheel
+# Install PyQt5 (adjust to specific modules if possible)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3-pyqt5 \
+    python3-pyqt5.qtwebengine \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install PyQt6 (without strict version constraint)
-RUN pip install "PyQt6>=6.7" --only-binary :all:
+# Install Python dependencies
+COPY requirements.txt /app/
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Debug Qt and qmake
-RUN which qmake && qmake --version
-
-# Create the model directory
-RUN mkdir -p /app/classifiers/model
-
-# Download the model from LRZ
-RUN wget --no-verbose --output-document=/app/classifiers/model/model.tar.gz \
-    "https://syncandshare.lrz.de/getlink/fiRQrzQkL94w4DWzgSNPX/model"
-
-# Extract the model (assuming it is a tar.gz file)
-RUN tar -xzf /app/classifiers/model/model.tar.gz -C /app/classifiers/model && \
-    rm /app/classifiers/model/model.tar.gz
-
-# Copy project files
+# Copy the project files
 COPY . /app
 
-# Install remaining Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Create the model directory and download models
+RUN mkdir -p /app/classifiers/model
+COPY download_models.py /app/
+RUN python /app/download_models.py
 
 # Set the default command
 CMD ["python", "main.py"]

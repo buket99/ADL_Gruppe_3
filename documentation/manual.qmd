@@ -13,6 +13,8 @@ Before you begin, ensure you have the following installed:
 
 -   Git
 -   Docker
+-   An X server (XQuartz on macOS, WSL2 with VcXsrv or X410 on Windows)
+-   OpenAI API Key
 
 ### Step 1: Clone the Git Repository
 
@@ -23,64 +25,15 @@ git clone https://github.com/buket99/ADL_Gruppe_3.git
 cd ADL_Gruppe_3
 ```
 
-### Step 2: Build the Docker Image
+### Step 2: Download the fine-tuned models
 
-The project uses a Docker container to ensure a consistent environment. Build the Docker image by running the following command in the project's root directory:
-
-```bash
-docker build -t adl-gruppe-3 .
-```
-
-This command will create a Docker image named `adl-gruppe-3` based on the provided `Dockerfile`. The Dockerfile includes all necessary dependencies, including Pandoc for document conversion.
-
-### Step 3: Run the Docker Container
-
-After building the image, run the Docker container with the following command:
+Run the following script to download and extract the trained models:
 
 ```bash
-docker run -it --device=/dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw -e DISPLAY=$DISPLAY adl-gruppe-3
+python download_models.py
 ```
 
-This command does the following:
-
--   `docker run -it`: Runs a container in interactive mode with a pseudo-TTY.
--   `--device=/dev/video0:/dev/video0`: Gives the container access to the host's webcam.
--   `-v /tmp/.X11-unix:/tmp/.X11-unix:rw`: Shares the X11 socket, allowing the container to display GUI applications on the host.
--   `-e DISPLAY=$DISPLAY`: Sets the display environment variable.
-
-::: {.callout-note}
-This setup assumes you have a webcam available at `/dev/video0`. If your webcam is at a different path, adjust the command accordingly. Also, for the GUI to work, you need an X server running on your host. On Linux, this is usually the case. On macOS, you might need to install XQuartz. On Windows, you may need to use WSL2 with an X server like VcXsrv or X410.
-
-Please test this setup and let me know if it works. If you encounter issues, we can adjust the instructions accordingly.
-:::
-
-### (Optional) Step 4: Manual Installation (Without Docker)
-
-If you prefer not to use Docker, you can install the system manually. This is not recommended as you may encounter dependency issues. But here are the steps:
-
-1. **Install system dependencies:**
-
-    ```bash
-    sudo apt-get update && sudo apt-get install -y \
-        pandoc \
-        libgl1-mesa-glx \
-        libglib2.0-0 \
-        libsm6 \
-        libxrender1 \
-        libxext6
-    ```
-
-2. **Install Python dependencies:**
-
-    ```bash
-    pip install --no-cache-dir -r requirements.txt
-    ```
-
-## Usage
-
-This section describes the steps required to create an article using the system.
-
-### Step 1: Set your OpenAI API Key
+### Step 3: Set your OpenAI API Key
 
 **Before launching the application**, you need to provide your OpenAI API key.
 
@@ -98,7 +51,42 @@ This section describes the steps required to create an article using the system.
 Without a valid OpenAI API key in the `agents/.env` file, the article generation functionality will not work.
 :::
 
-### Step 2: Launch the Application
+### Step 4: Build the Docker Image
+
+The project uses a Docker container to ensure a consistent environment. Build the Docker image by running the following command in the project's root directory:
+
+```bash
+docker build -t adl-gruppe-3 .
+```
+
+This command will create a Docker image named `adl-gruppe-3` based on the provided `Dockerfile`. The Dockerfile includes all necessary dependencies, including Pandoc for document conversion.
+
+### Step 5: Run the Docker Container
+
+After building the image, run the Docker container with the following command:
+
+```bash
+docker run -it --rm --device=/dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw -e DISPLAY=$DISPLAY -v $(pwd):/app adl-gruppe-3
+```
+
+This command does the following:
+
+-   `docker run -it`: Runs a container in interactive mode with a pseudo-TTY.
+-   `--rm`: Remove the container when it exits.
+-   `--device=/dev/video0:/dev/video0`: Gives the container access to the host's webcam.
+-   `-v /tmp/.X11-unix:/tmp/.X11-unix:rw`: Shares the X11 socket, allowing the container to display GUI applications on the host.
+-   `-e DISPLAY=$DISPLAY`: Sets the display environment variable.
+-   `-v $(pwd):/app`: Mounts the project directory into the container.
+
+::: {.callout-note}
+This setup assumes you have a webcam available at `/dev/video0`. If your webcam is at a different path, adjust the command accordingly. Also, for the GUI to work, you need an X server running on your host. On Linux, this is usually the case. On macOS, you might need to install [XQuartz](https://www.xquartz.org/). On Windows, you may need to use [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) with an X server like [VcXsrv](https://sourceforge.net/projects/vcxsrv/) or [X410](https://x410.dev/).
+:::
+
+## Usage
+
+This section describes the steps required to create an article using the system.
+
+### Step 1: Launch the Application
 
 If you are using Docker, start the container as described in the installation section. If you installed manually, navigate to the project's root directory in your terminal and run:
 
@@ -108,31 +96,38 @@ python main.py
 
 This will launch the application's graphical user interface.
 
-### Step 3: Capture Images
+### Step 2: Capture Images
 
-1. **Select a Camera**: Use the "Camera" dropdown menu to select your desired camera.
+1. **Select a Camera**: Use the "Camera" dropdown menu to select your desired camera. The dropdown will populate with available cameras.
 2. **Capture Images**: Click the "Capture" button to take a picture. The captured image will appear in one of the three image slots on the right side of the window. You can capture up to three images.
 
-### Step 4: Select an Image for Evaluation
+### Step 3: Select an Image for Evaluation
 
 Click on one of the captured images to select it. The selected image will be highlighted with a blue border.
 
-### Step 5: Evaluate the Image
+### Step 4: Evaluate the Image
 
-1. **Choose an Image Classifier**: Use the "Image Classifier" dropdown menu to select the desired classification model (e.g., AlexNet, ResNet50).
+1. **Choose an Image Classifier**: Use the "Image Classifier" dropdown menu to select the desired classification model (e.g., AlexNet, ResNet50, ViT). The dropdown will display available fine-tuned models.
 2. **Evaluate**: Click the "Evaluate Image" button. The system will classify the selected image and display the predicted class (e.g., Water, Wine, Coke) in the feedback label.
 
-### Step 6: Generate the Article
+### Step 5: Generate the Article
 
-1. **Choose a GPT Model**: Use the "GPT Model" dropdown menu to select the desired GPT model for article generation.
-2. **Choose a Diffusion Model**: Use the "Diffusion Model" dropdown menu to select the desired model for image generation.
+1. **Choose a GPT Model**: Use the "GPT Model" dropdown menu to select the desired GPT model for article generation (e.g., gpt-3.5-turbo, gpt-4).
+2. **Choose a Diffusion Model**: Use the "Diffusion Model" dropdown menu to select the desired model for image generation (e.g., stable-diffusion-v1-5 (mid), stable-diffusion-2-1-base (fast)).
 3. **Generate**: Click the "Generate Article" button. The system will generate an article based on the predicted class of the evaluated image, using the selected GPT model. It will also generate images related to the article's topic using the chosen Diffusion Model.
 4. **Feedback**: The feedback label will indicate that the article has been generated and passed to the assembler.
 
-### Step 7: Open the PDF
+### Step 6: Open the PDF
 
 Click the "Open PDF" button to open the generated article in your default PDF viewer. The article will be located at `output.pdf` in the project's root directory.
 
 ::: {.callout-note}
 The generated PDF will be overwritten each time you generate a new article. If you want to keep a specific version, make sure to save a copy elsewhere.
 :::
+
+## Troubleshooting
+
+-   **Camera not found**: Ensure your webcam is properly connected and recognized by your operating system. If you're using Docker, make sure you've correctly passed the device to the container (e.g., `--device=/dev/video0:/dev/video0`).
+-   **GUI not displaying**: If you're using Docker, ensure you've set up X11 forwarding correctly (e.g., `-v /tmp/.X11-unix:/tmp/.X11-unix:rw -e DISPLAY=$DISPLAY`). On macOS, install XQuartz. On Windows, use WSL2 with an X server like VcXsrv or X410.
+-   **Article generation fails**: Verify that you've set your OpenAI API key correctly in the `agents/.env` file.
+-   **Model not found**: If you encounter errors related to missing models, double-check that you've downloaded the models using `download_models.py` and that they are in the correct directory (`classifiers/model`).

@@ -2,7 +2,7 @@ import sys
 import platform
 import cv2
 from pathlib import Path
-from PyQt6.QtWidgets import (
+from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
     QWidget,
@@ -12,8 +12,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QComboBox,
 )
-from PyQt6.QtCore import QTimer, Qt
-from PyQt6.QtGui import QPixmap, QImage
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPixmap, QImage
 from classifiers.image_classifier import classify_image, get_available_models
 from diffusion_model.diffusion_model import (
     generate_image,

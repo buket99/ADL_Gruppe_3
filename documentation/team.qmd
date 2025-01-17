@@ -1,25 +1,76 @@
-# Team Work 
+# Team Work
 
+## Work Packages
 
+Table @tbl-wps outlines all work packages defined for this project, along with their descriptions and assigned team members.
 
-## Work Packages 
-
-[Describe all work packages]
-
-Tahble @tbl-wps contains all work packages defined for this project.
-
-+-------------+--------------------------------+
-| Package No. | Description                    |
-+=============+================================+
-|             |                                |
-|             |                                |
-+-------------+--------------------------------+
-|             |                                |
-|             |                                |
-+-------------+--------------------------------+
++-------------+------------------------------------------------+-------------------------------------+
+| Package No. | Description                                    | Assigned To                         |
++=============+================================================+=====================================+
+| WP1         | Image Classifier Development and Evaluation    | Nico Bayer                          |
++-------------+------------------------------------------------+-------------------------------------+
+| WP2         | Article Agent and Assembler Development        | Buket Kurtulus                      |
++-------------+------------------------------------------------+-------------------------------------+
+| WP3         | Diffusion Model Integration                    | Moritz Kick                         |
++-------------+------------------------------------------------+-------------------------------------+
+| WP4         | Main Application Script (GUI and Integration)  | Moritz Kick                         |
++-------------+------------------------------------------------+-------------------------------------+
+| WP5         | Docker Environment Setup                       | Moritz Kick                         |
++-------------+------------------------------------------------+-------------------------------------+
+| WP6         | Documentation                                  | Moritz Kick, Nico Bayer, Buket Kurtulus |
++-------------+------------------------------------------------+-------------------------------------+
+| WP7         | Rework of Image Classifier and Article Agent/Assembler | Moritz Kick                     |
++-------------+------------------------------------------------+-------------------------------------+
+| WP8         | Image Data Collection for Classifier Training  | Buket Kurtulus, Moritz Kick         |
++-------------+------------------------------------------------+-------------------------------------+
+| WP9         | Web Scraping for Image Data (Attempted)        | Nico Bayer                          |
++-------------+------------------------------------------------+-------------------------------------+
 
 : Work packages. {#tbl-wps}
 
-## Timeline 
+## Timeline
 
-[Describe who worked on which work package and when]
+The project was developed iteratively, with continuous collaboration and integration among team members. The following is a general timeline of the major work packages:
+
+-   **KW 42-46:**
+    -   Initial project setup and environment configuration.
+    -   Nico Bayer began development of the Image Classifier (WP1), including initial evaluation and attempted web scraping for image data (WP9).
+    -   Buket Kurtulus started working on the Article Agent and Assembler (WP2).
+    -   Moritz Kick researched and integrated the Diffusion Model (WP3).
+    -   Buket Kurtulus and Moritz Kick collected images to support classifier training (WP8).
+
+-   **KW 47-50:**
+    -   Moritz Kick developed the main application script, integrating the initial versions of the Image Classifier, Article Agent, and Diffusion Model (WP4).
+    -   Moritz Kick set up the Docker environment (WP5).
+    -   All team members started contributing to the documentation (WP6).
+
+-   **KW 51-2 (2025):**
+    -   Extensive testing and debugging of the integrated system.
+    -   Moritz Kick reworked the Image Classifier and Article Agent/Assembler (WP7) to improve accuracy, compatibility, article generation, and formatting.
+    -   Continued refinement of the documentation.
+
+-   **KW 3:**
+    -   Final testing and bug fixes.
+    -   Documentation completion and review.
+    -   Project submission.
+
+## Team Member Contributions
+
+-   **Nico Bayer:**
+    -   Developed the initial version of the Image Classifier (WP1).
+    -   Performed evaluation of the Image Classifier.
+    -   Attempted web scraping for additional bottle images, although with limited success (WP9).
+    -   Contributed to the documentation (WP6).
+
+-   **Buket Kurtulus:**
+    -   Developed the initial version of the Article Agent and Assembler (WP2).
+    -   Collected image data to support classifier training (WP8).
+    -   Contributed to the documentation (WP6).   
+
+-   **Moritz Kick:**
+    -   Developed the Diffusion Model integration (WP3).
+    -   Created the main application script, including the GUI and integration of all modules (WP4).
+    -   Set up the Docker environment (WP5) (tested on Mac M1, limited testing on Windows).
+    -   Contributed to the documentation (WP6).
+    -   Reworked the Image Classifier and Article Agent/Assembler to improve their performance and integration (WP7).
+    -   Collected image data to support classifier training (WP8).

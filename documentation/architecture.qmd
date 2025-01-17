@@ -41,7 +41,7 @@ It provides a live stream of images, which can be captured by the user. These ca
 #### Used Packages
 
 -   **OpenCV (cv2)**: For camera access and image processing.
--   **PyQt6**: For creating the graphical user interface.
+-   **PyQt5**: For creating the graphical user interface.
 -   **platform**: To determine the operating system and select the appropriate camera capture method.
 
 #### Specific Design Decisions
